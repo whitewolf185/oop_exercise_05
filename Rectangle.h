@@ -14,6 +14,10 @@ struct Rectangle{
     T b;
 
     Rectangle(const vertex_t& _point, const T& _a, const T& _b ):a(_a), point(_point),b(_b){}
+
+    T area() const {
+        return a*b;
+    }
 };
 
 template<class T>

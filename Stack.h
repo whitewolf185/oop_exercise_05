@@ -7,6 +7,7 @@ struct Node {
     T data;
     std::shared_ptr<Node> prev;
 
+
     Node() : prev(nullptr) {}
     Node(const T &val) : data(val) {}
     friend void operator++(std::shared_ptr<Node<T>>&);
@@ -18,7 +19,7 @@ struct Node {
 template<class T>
 class Stack {
 private:
-
+    size_t size = 0;
     std::shared_ptr<Node<T>> head;
 public:
 
@@ -63,6 +64,7 @@ public:
     void pop(){
         if(head){
             head = head->prev;
+            --size;
         }
         else{
             throw std::runtime_error("Stack is empty");
@@ -74,6 +76,7 @@ public:
         std::shared_ptr<Node<T>> newPtr{newNode};
         newPtr->prev = head;
         head = newPtr;
+        ++size;
     }
 
     T top(){
@@ -87,7 +90,7 @@ public:
 
     void insert(iterator& it, const T& elem){
         std::unique_ptr<Node<T>> newNode {new Node<T>(elem)};
-        std::shared_ptr<Node<T>> newPtr(newNode);
+        std::shared_ptr<Node<T>> newPtr = std::move(newNode);
         std::shared_ptr<Node<T>> prevPtr = head;
 
         if(prevPtr){
@@ -107,6 +110,7 @@ public:
         else{
             head = newPtr;
         }
+        ++size;
     }
 
     void erase(iterator& it){
@@ -124,7 +128,9 @@ public:
                 }
                 prevPtr->prev = prevPtr->prev->prev;
             }
+            --size;
         }
+
     }
 
     iterator begin(){
@@ -133,6 +139,10 @@ public:
 
     iterator end(){
         return iterator(nullptr);
+    }
+
+    size_t getSize(){
+        return size;
     }
 };
 
