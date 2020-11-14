@@ -3,6 +3,36 @@
 #include "Rectangle.h"
 
 template<class T>
+struct Node;
+
+template<class T>
+void operator++(std::shared_ptr<Node<T>>& curNode){
+    if(curNode){
+        curNode = curNode->prev;
+    }
+    else{
+        throw std::out_of_range("Iterator has already in nullptr");
+    }
+}
+
+template<class T>
+bool operator!=(const Node<T>& lhs, const Node<T>& rhs){
+    return &lhs != &rhs;
+}
+
+template<class T>
+bool operator==(const Node<T>& lhs, const Node<T>& rhs){
+    return &lhs.data == &rhs.data;
+}
+
+template<class T>
+std::ostream& operator<<(std::ostream& cout, const Node<T>& node){
+    cout << node.data;
+    return cout;
+}
+
+
+template<class T>
 struct Node {
     T data;
     std::shared_ptr<Node> prev;
@@ -10,11 +40,12 @@ struct Node {
 
     Node() : prev(nullptr) {}
     Node(const T &val) : data(val) {}
-    friend void operator++(std::shared_ptr<Node<T>>&);
-    friend bool operator!=(const std::shared_ptr<Node<T>>&,const std::shared_ptr<Node<T>>&);
-    friend bool operator==(const std::shared_ptr<Node<T>>&, const std::shared_ptr<Node<T>>&);
-    friend std::ostream& operator<<(std::ostream&, const Node<T>&);
+    friend void operator ++ <>(std::shared_ptr<Node<T>>& n);
+    friend bool operator != <>(const Node<T>& lhs, const Node<T>& rhs);
+    friend bool operator == <>(const Node<T>& lhs, const Node<T>& rhs);
+    friend std::ostream& operator<< <>(std::ostream& cout, const Node<T>& obj);
 };
+
 
 template<class T>
 class Stack {
@@ -35,17 +66,17 @@ public:
         using reference = T&;
 
         iterator():iter(nullptr){}
-        iterator(const std::shared_ptr<Node<T>> & anotherIter) : iter(anotherIter) {}
+        explicit iterator(const std::shared_ptr<Node<T>> & anotherIter) : iter(anotherIter) {}
 
         bool isNull(){
-            return iter == nullptr ? true : false;
+            return iter == nullptr;
         }
 
         friend void operator ++ (iterator & it) {
             ++it.iter;
         }
 
-        friend bool operator != (const iterator & lhs, const iterator & rhs) {
+        friend bool operator != (const Stack<T>::iterator& lhs, const Stack<T>::iterator & rhs) {
             return lhs.iter != rhs.iter;
         }
 
@@ -88,7 +119,7 @@ public:
         }
     }
 
-    void insert(iterator& it, const T& elem){
+    void insert(Stack<T>::iterator& it, const T& elem){
         std::unique_ptr<Node<T>> newNode {new Node<T>(elem)};
         std::shared_ptr<Node<T>> newPtr = std::move(newNode);
         std::shared_ptr<Node<T>> prevPtr = head;
@@ -100,7 +131,7 @@ public:
                 }
             }
             else{
-                while(*prevPtr->prev != nullptr){
+                while(prevPtr->prev != nullptr){
                     ++prevPtr;
                 }
             }

@@ -37,10 +37,16 @@ o	Выводит на экран количество объектов, у ко�
 int main() {
     Stack<Rectangle<int>> st;
     int x, y, a,b;
-    std::cout << "Input rectangles.\nTo end entering press the EOF button.\n"
-                 "First, enter the X and Y - point of vertex\n"
-                 "Second, enter the sides of rectangle - A and B" << std::endl;
-    while(std::cin >> x >> y >> a >> b){
+    size_t n;
+    std::cout << "Input count of rectangles" << std::endl;
+    std::cin >> n;
+
+    for (int i = 0; i < n; ++i){
+        std::cout << "Input rectangles.\nTo end entering press the EOF button.\n"
+                     "First, enter the X and Y - point of vertex\n"
+                     "Second, enter the sides of rectangle - A and B" << std::endl;
+        std::cin >> x >> y;
+        std::cin >> a >> b;
         st.push(Rectangle<int>(std::pair<int,int> {x,y}, a, b));
     }
     auto printStack = [](const Node<Rectangle<int>>& obj){
@@ -50,10 +56,9 @@ int main() {
     std::for_each(st.begin(), st.end(), printStack);
 
     std::cout << "\nEnter your index to insert" << std::endl;
-    size_t n;
     std::cin >> n;
     try{
-        if(st.getSize() < n){
+        if(st.getSize()+1 < n){
             throw std::invalid_argument("You entered wrong index");
         }
         else{
@@ -69,7 +74,7 @@ int main() {
         }
     }
     catch (std::invalid_argument& e) {
-        std::cout << e.what() << std::endl;
+        std::terminate();
     }
 
     std::cout << "\nThis is all rectangles" << std::endl;
