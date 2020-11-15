@@ -5,7 +5,6 @@
 #include <memory>
 #include <exception>
 
-
 template<class T>
 struct Rectangle{
     using vertex_t = std::pair<T,T>;
